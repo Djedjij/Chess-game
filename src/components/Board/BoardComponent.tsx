@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
-import styles from "../../App.module.scss";
 import { Board } from "../../models/Board";
 import CellComponent from "../Cell/CellComponent";
 import { Cell } from "../../models/Cell";
-
+import styles from "../../App.module.scss";
+import { Player } from "../../models/Player";
 interface BoardProps {
   board: Board;
   setBoard: (board: Board) => void;
+  currentPlayer: Player | null;
+  swapPlayer: () => void;
 }
 
-const BoardComponent: React.FC<BoardProps> = ({ board, setBoard }) => {
+const BoardComponent: React.FC<BoardProps> = ({
+  board,
+  setBoard,
+  currentPlayer,
+  swapPlayer,
+}) => {
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
   const clickOnCell = (cell: Cell) => {
@@ -19,9 +26,12 @@ const BoardComponent: React.FC<BoardProps> = ({ board, setBoard }) => {
       selectedCell.figure?.canMove(cell)
     ) {
       selectedCell.moveFigure(cell);
+      swapPlayer();
       setSelectedCell(null);
     } else {
-      setSelectedCell(cell);
+      if (cell.figure?.color === currentPlayer?.color) {
+        setSelectedCell(cell);
+      }
     }
   };
 
